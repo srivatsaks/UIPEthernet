@@ -26,7 +26,7 @@
   #if defined(__STM32F3__) || defined(STM32F3) || defined(__RFduino__)
     #include "mbed/Client.h"
   #else
-    #include "Client.h"
+    #include "Client_edtd.h"
   #endif
 #endif
 #if defined(__MBED__)
