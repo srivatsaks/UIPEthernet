@@ -1,23 +1,18 @@
 /*
  Enc28J60NetworkClass.h
  UIPEthernet network driver for Microchip ENC28J60 Ethernet Interface.
-
  Copyright (c) 2013 Norbert Truchsess <norbert.truchsess@t-online.de>
  All rights reserved.
-
  based on enc28j60.c file from the AVRlib library by Pascal Stang.
  For AVRlib See http://www.procyonengineering.com/
-
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
-
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
-
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -399,12 +394,14 @@ Enc28J60Network::setERXRDPT(void)
   #if ACTLOGLEVEL>=LOG_DEBUG_V3
     LogObject.uart_send_strln(F("Enc28J60Network::setERXRDPT(void) DEBUG_V3:Function started"));
   #endif
+  // Make sure the value is odd. See Rev. B1,B4,B5,B7 Silicon Errata issues 14
+  uint16_t actnextPacketPtr = nextPacketPtr == RXSTART_INIT ? RXSTOP_INIT : nextPacketPtr-1;
   #if ACTLOGLEVEL>=LOG_DEBUG
     LogObject.uart_send_str(F("Enc28J60Network::setERXRDPT(void) DEBUG:Set actnextPacketPtr:"));
-    LogObject.uart_send_hexln(nextPacketPtr);
+    LogObject.uart_send_hexln(actnextPacketPtr);
   #endif
   // datasheet: The ENC28J60 will always write up to, but not including
-  writeRegPair(ERXRDPTL, nextPacketPtr);
+  writeRegPair(ERXRDPTL, actnextPacketPtr);
 }
 
 memaddress
@@ -776,7 +773,6 @@ enc28J60_mempool_block_move_callback(memaddress dest, memaddress src, memaddress
        2. If an interrupt at the end of the copy process is
        desired, set EIE.DMAIE and EIE.INTIE and
        clear EIR.DMAIF.
-
        3. Verify that ECON1.CSUMEN is clear. */
       Enc28J60Network::writeOp(ENC28J60_BIT_FIELD_CLR, ECON1, ECON1_CSUMEN);
 

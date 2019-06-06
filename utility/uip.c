@@ -911,7 +911,7 @@ uip_process(u8_t flag)
     DEBUG_PRINTF("UDP IP checksum 0x%04x\n", uip_ipchksum());
      if(BUF->proto == UIP_PROTO_UDP && (
         uip_ipaddr_cmp(BUF->destipaddr, all_ones_addr) // Limited broadcast
-        || ((BUF->destipaddr[0]==(uip_hostaddr[0] | (~uip_netmask[0]))) && (BUF->destipaddr[1]==(uip_hostaddr[1] | (~uip_netmask[1])))) // Direct broadcast
+        || ((BUF->destipaddr[0]==(uip_hostaddr[0] | (0xFFFF&(~uip_netmask[0])))) && (BUF->destipaddr[1]==(uip_hostaddr[1] | (0XFFFF&(~uip_netmask[1]))))) // Direct broadcast
         )
        /*&&
 	 uip_ipchksum() == 0xffff*/) {
@@ -1554,7 +1554,6 @@ uip_process(u8_t flag)
     application should put new data into the buffer, otherwise we are
     retransmitting an old segment, and the application should put that
     data into the buffer.
-
     If the incoming packet is a FIN, we should close the connection on
     this side as well, and we send out a FIN and enter the LAST_ACK
     state. We require that there is no outstanding data; otherwise the
@@ -1614,7 +1613,6 @@ uip_process(u8_t flag)
        set the current MSS to the window size to ensure that the
        application does not send more data than the other end can
        handle.
-
        If the remote host advertises a zero window, we set the MSS to
        the initial MSS so that the application will send an entire MSS
        of data. This data will not be acknowledged by the receiver,
@@ -1633,13 +1631,11 @@ uip_process(u8_t flag)
        might want to send more data. If the incoming packet had data
        from the peer (as flagged by the UIP_NEWDATA flag), the
        application must also be notified.
-
        When the application is called, the global variable uip_len
        contains the length of the incoming data. The application can
        access the incoming data through the global pointer
        uip_appdata, which usually points UIP_IPTCPH_LEN + UIP_LLH_LEN
        bytes into the uip_buf array.
-
        If the application wishes to send any data, this data should be
        put into the uip_appdata and the length of the data should be
        put into uip_len. If the application don't have any data to
