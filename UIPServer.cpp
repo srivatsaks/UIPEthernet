@@ -16,7 +16,7 @@
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   */
-#include "UIPEthernet.h"
+#include "UIPEthernet_edtd.h"
 #include "UIPServer.h"
 #include "utility/logging.h"
 extern "C" {
@@ -66,4 +66,3 @@ size_t UIPServer::write(const uint8_t *buf, size_t size)
     }
   return ret;
 }
-

@@ -17,7 +17,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "UIPEthernet.h"
+#include "UIPEthernet_edtd.h"
 #include "UIPUdp.h"
 #include "Dns.h"
 #include "utility/logging.h"

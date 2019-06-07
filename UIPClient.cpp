@@ -25,7 +25,7 @@ extern "C"
 #include "utility/uip_arp.h"
 #include "string.h"
 }
-#include "UIPEthernet.h"
+#include "UIPEthernet_edtd.h"
 #include "UIPClient.h"
 #if UIP_UDP
   #include "Dns.h"
