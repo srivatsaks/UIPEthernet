@@ -16,6 +16,10 @@
  * This example was based upon uIP hello-world by Adam Dunkels <adam@sics.se>
  * Ported to the Arduino IDE by Adam Nielsen <malvineous@shikadi.net>
  * Adaption to Enc28J60 by Norbert Truchsess <norbert.truchsess@t-online.de>
+ * 
+ * ----------------------
+ * modified on 01-06-2019
+ * srivatsaks deviot.in
  */
 
 #define MACADDRESS 0x00,0x01,0x02,0x03,0x04,0x05
@@ -34,7 +38,7 @@
   #include "mbed/Print.h"
 #endif
 
-#include <UIPEthernet.h>
+#include <UIPEthernet_edtd.h>
 #include "utility/logging.h"
 
 EthernetServer server = EthernetServer(LISTENPORT);
@@ -61,10 +65,20 @@ int main() {
   uint8_t myDNS[4] = {MYDNS};
   uint8_t myGW[4] = {MYGW};
 
+  pinMode(14, OUTPUT);
+  pinMode(15, OUTPUT);
+  pinMode(5, OUTPUT);
+  digitalWrite(5, LOW);
+  delay(100);
+  Serial.begin(115200); // for debugging
+  digitalWrite(5, HIGH);
+
 //  Ethernet.begin(mac,myIP);
   Ethernet.begin(mac,myIP,myDNS,myGW,myMASK);
 
   server.begin();
+  Serial.print("server is at");
+  Serial.println(Ethernet.localIP());
 #if defined(ARDUINO)
 }
 

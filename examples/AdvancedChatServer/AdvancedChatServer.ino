@@ -17,6 +17,11 @@
  by Tom Igoe
  redesigned to make use of operator== 25 Nov 2013
  by Norbert Truchsess
+ 
+ 
+  ----------------------
+  modified on 01-06-2019
+  srivatsaks deviot.in
 
  */
 
@@ -24,7 +29,7 @@
 // The IP address will be dependent on your local network.
 
 #define MACADDRESS 0x00,0x01,0x02,0x03,0x04,0x05
-#define MYIPADDR 192,168,1,6
+#define MYIPADDR 192,168,1,200
 #define MYIPMASK 255,255,255,0
 #define MYDNS 192,168,1,1
 #define MYGW 192,168,1,1
@@ -40,7 +45,7 @@
   #include "mbed/Print.h"
 #endif
 
-#include <UIPEthernet.h>
+#include <UIPEthernet_edtd.h>
 #include <utility/logging.h>
 
   uint8_t mac[6] = {MACADDRESS};
@@ -59,11 +64,22 @@ void setup() {
 #if defined(__MBED__)
 int main() {
 #endif  
+
+  pinMode(14, OUTPUT);
+  pinMode(15, OUTPUT);
+  pinMode(5, OUTPUT);
+  digitalWrite(5, LOW);
+  delay(100);
+  Serial.begin(115200); // for debugging
+  digitalWrite(5, HIGH);
   // initialize the ethernet device
   //Ethernet.begin(mac,myIP);
   Ethernet.begin(mac,myIP,myDNS,myGW,myMASK);
   // start listening for clients
   server.begin();
+  Serial.print("server is at: ");
+  Serial.println(Ethernet.localIP());
+  
  // Open serial communications and wait for port to open:
   #if ACTLOGLEVEL>LOG_NONE
 

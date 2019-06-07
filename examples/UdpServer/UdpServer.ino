@@ -12,7 +12,14 @@
  * send packet via upd to test
  *
  * Copyright (C) 2013 by Norbert Truchsess (norbert.truchsess@t-online.de)
+ * 
  */
+
+#define MACADDRESS 0x00,0x01,0x02,0x03,0x04,0x05
+#define MYIPADDR 192,168,1,6
+#define MYIPMASK 255,255,255,0
+#define MYDNS 192,168,1,1
+#define MYGW 192,168,1,1
 
 #if defined(__MBED__)
   #include <mbed.h>
@@ -22,7 +29,7 @@
   #include "mbed/Print.h"
 #endif
 
-#include <UIPEthernet.h>
+#include <UIPEthernet_edtd.h>
 #include "utility/logging.h"
 
 EthernetUDP udp;
@@ -42,12 +49,25 @@ int main() {
     #endif
   #endif
 
-  uint8_t mac[6] = {0x00,0x01,0x02,0x03,0x04,0x05};
+  
+  uint8_t mac[6] = {MACADDRESS};
+  uint8_t myIP[4] = {MYIPADDR};
+  uint8_t myMASK[4] = {MYIPMASK};
+  uint8_t myDNS[4] = {MYDNS};
+  uint8_t myGW[4] = {MYGW};
 
-  Ethernet.begin(mac,IPAddress(192,168,0,6));
+  pinMode(14, OUTPUT);
+  pinMode(15, OUTPUT);
+  pinMode(5, OUTPUT);
+  digitalWrite(5, LOW);
+  delay(100);
+  Serial.begin(115200); // for debugging
+  digitalWrite(5, HIGH);
+  Ethernet.begin(mac,myIP,myDNS,myGW,myMASK);
 
   int success = udp.begin(5000);
-
+  Serial.print("server is at: ");
+  Serial.println(Ethernet.localIP());
   #if ACTLOGLEVEL>=LOG_INFO
     LogObject.uart_send_str(F("initialize: "));
     LogObject.uart_send_strln(success ? "success" : "failed");

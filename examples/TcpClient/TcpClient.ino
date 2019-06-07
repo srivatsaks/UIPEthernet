@@ -14,7 +14,14 @@
  * response the client disconnects and tries to reconnect after 5 seconds.
  *
  * Copyright (C) 2013 by Norbert Truchsess <norbert.truchsess@t-online.de>
+ * 
  */
+
+#define MACADDRESS 0x05,0x04,0x03,0x02,0x01,0x05
+#define MYIPADDR 192,168,1,200
+#define MYIPMASK 255,255,255,0
+#define MYDNS 192,168,1,1
+#define MYGW 192,168,1,1
 
 #if defined(__MBED__)
   #include <mbed.h>
@@ -24,8 +31,14 @@
   #include "mbed/Print.h"
 #endif
 
-#include <UIPEthernet.h>
+#include <UIPEthernet_edtd.h>
 #include "utility/logging.h"
+
+uint8_t mac[6] = {MACADDRESS};
+uint8_t myIP[4] = {MYIPADDR};
+uint8_t myMASK[4] = {MYIPMASK};
+uint8_t myDNS[4] = {MYDNS};
+uint8_t myGW[4] = {MYGW};
 
 EthernetClient client;
 unsigned long next;
@@ -44,9 +57,19 @@ int main() {
       Serial LogObject(SERIAL_TX,SERIAL_RX);
     #endif
   #endif
-
-  uint8_t mac[6] = {0x00,0x01,0x02,0x03,0x04,0x05};
-  Ethernet.begin(mac); //Configure IP address via DHCP
+  pinMode(14, OUTPUT);
+  pinMode(15, OUTPUT);
+  pinMode(5, OUTPUT);
+  digitalWrite(5, LOW);
+  delay(100);
+  Serial.begin(115200); // for debugging
+  digitalWrite(5, HIGH);
+  Serial.println(F("Ethernet Test"));
+  // initialize the ethernet device
+  //Ethernet.begin(mac,myIP);
+  Ethernet.begin(mac,myIP,myDNS,myGW,myMASK);
+  Serial.print("client is at: ");
+  Serial.println(Ethernet.localIP());
 
   #if ACTLOGLEVEL>=LOG_INFO
     LogObject.uart_send_str(F("localIP: "));
